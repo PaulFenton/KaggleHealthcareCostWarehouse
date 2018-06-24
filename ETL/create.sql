@@ -1,7 +1,7 @@
 IF OBJECT_ID('dbo.fact_Procedure_Cost', 'U') IS NOT NULL
   DROP TABLE dbo.Fact;
-IF OBJECT_ID('dbo.dim_Time', 'U') IS NOT NULL
-  DROP TABLE dbo.dim_Time;
+IF OBJECT_ID('dbo.dim_Date', 'U') IS NOT NULL
+  DROP TABLE dbo.dim_Date;
 IF OBJECT_ID('dbo.dim_Facility', 'U') IS NOT NULL
   DROP TABLE dbo.dim_Facility;
 IF OBJECT_ID('dbo.dim_Classifications_Diag', 'U') IS NOT NULL
