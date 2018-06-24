@@ -4,9 +4,7 @@
 
 * Python 3 (64-bit)
 * Microsoft SQL Server 2016 (for local db development)
-
-The source data file is not versioned, get it from Kaggle or the Google shared drive and put it in a folder called "source_data"
-The path should be ./source_data/Hospital_Inpatient_Discharges__SPARCS_De-Identified___2015.csv
+* Get the source data from Kaggle and put it at ./source_data/Hospital_Inpatient_Discharges__SPARCS_De-Identified___2015.csv
 
 ## Database configuration ##
 
