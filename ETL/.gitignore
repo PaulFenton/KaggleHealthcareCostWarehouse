@@ -1,2 +1,4 @@
 venv/
+venv-64/
+__pycache__/
 .idea
