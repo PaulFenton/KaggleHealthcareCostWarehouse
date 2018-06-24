@@ -18,9 +18,9 @@ IF OBJECT_ID('dbo.dim_Provider', 'U') IS NOT NULL
 CREATE TABLE dim_Facility(
 	Facility_Key int NOT NULL IDENTITY(1,1),
 	[Facility ID] int NOT NULL,
-	[Hospital Service Area] varchar(50),
+	[Health Service Area] varchar(50),
 	[Hospital County] varchar(50),
-	[Operating Certificate] integer,
+	[Operating Certificate Number] integer,
 	[Facility Name] varchar(255),
 	[Active Flag] smallint NOT NULL DEFAULT 1,
 	[Effective Start Date] datetime,
