@@ -12,6 +12,7 @@ The following environment variables must be set to configure python's database c
 
 ```console
 set SERVER=<your computer name>\SQLEXPRESS
+set DB_NAME=<your database name>
 set DB_USER=<your user name>
 set DB_PASSWORD=<your password>
 ```
