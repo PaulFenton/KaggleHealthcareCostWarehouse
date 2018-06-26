@@ -20,9 +20,9 @@ IF OBJECT_ID('dbo.dim_Provider', 'U') IS NOT NULL
 CREATE TABLE dim_Facility(
 	Facility_Key int NOT NULL IDENTITY(1,1),
 	[Facility ID] int NOT NULL,
-	[Hospital Service Area] varchar(50),
+	[Health Service Area] varchar(50),
 	[Hospital County] varchar(50),
-	[Operating Certificate] integer,
+	[Operating Certificate Number] integer,
 	[Facility Name] varchar(255),
 	[Active Flag] smallint NOT NULL DEFAULT 1,
 	[Effective Start Date] datetime,
@@ -45,15 +45,13 @@ CREATE TABLE dim_Time(
 )
 
 CREATE TABLE dim_Classifications_Diag(
-	Classifications_Diag_key int NOT NULL IDENTITY(1,1),
-	[ID Classifications Diag] int,
+	Classifications_Diag_Key int NOT NULL IDENTITY(1,1),
 	[CCS Diagnosis Code] int,
 	[CCS Diagnosis Description] varchar(255)
 )
 
 CREATE TABLE dim_Classifications_Proc(
 	Classifications_Proc_Key int NOT NULL IDENTITY(1,1),
-	[ID Classifications Proc] int,
 	[CCS Procedure Code] varchar(10),
 	[CCS Procedure Description] varchar(255)
 )
@@ -74,10 +72,7 @@ CREATE TABLE dim_Payment(
 
 CREATE TABLE dim_Provider(
 	Provider_Key int NOT NULL IDENTITY(1,1),
-	[ID Provider] int,
-	[Attending Provider License] varchar(50),
-	[Operating Provider License] varchar(50),
-	[Other Provider License] varchar(50)
+	[Provider License Number] int,
 )
 
 alter table dim_Facility add primary key (Facility_Key);

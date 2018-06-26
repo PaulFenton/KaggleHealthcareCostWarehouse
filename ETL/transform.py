@@ -17,17 +17,68 @@ def clean_source(df):
     df['Total Charges'] = df['Total Charges'].replace('[\$,]', '', regex=True).astype(float)
     df['Total Costs'] = df['Total Costs'].replace('[\$,]', '', regex=True).astype(float)
 
-    # add some calculated columns to simplify reporting # todo should we do this?
+    # calculate profit in transformation to simplify reporting
     df['Total Profit'] = df['Total Charges'] - df['Total Costs']
-    df['Profit Margin'] = df['Total Profit'].divide(df['Total Charges'])
 
     return df
 
 def transform_dim_facility(df, startdate):
 
-    # add the new SCD tracking columns
-    df['Active Flag'] = 1
-    df['Effective Start Date'] = startdate
-    df['Effective End Date'] = np.nan
+    # extract the facility dimension from the main DF
+    dim = df.groupby(['Facility Id']).agg({
+        'Health Service Area': 'first',
+        'Hospital County': 'first',
+        'Operating Certificate Number': 'first',
+        'Facility Name': 'first'
+    }).reset_index()
 
-    return df
+    # add the new SCD tracking columns
+    dim['Active Flag'] = 1
+    dim['Effective Start Date'] = startdate
+    dim['Effective End Date'] = np.nan
+
+    return dim
+
+def transform_dim_diagnosis(df, startdate):
+
+    # extract the facility dimension from the main DF
+    dim = df.groupby(['CCS Diagnosis Code']).agg({
+        'CCS Diagnosis Description': 'first'
+    }).reset_index()
+
+    # add the new SCD tracking columns
+    #dim['Active Flag'] = 1
+    #dim['Effective Start Date'] = startdate
+    #dim['Effective End Date'] = np.nan
+
+    return dim
+
+def transform_dim_procedure(df, startdate):
+
+    # extract the facility dimension from the main DF
+    dim = df.groupby(['CCS Procedure Code']).agg({
+        'CCS Procedure Description': 'first'
+    }).reset_index()
+
+    # add the new SCD tracking columns
+    #dim['Active Flag'] = 1
+    #dim['Effective Start Date'] = startdate
+    #dim['Effective End Date'] = np.nan
+
+    return dim
+
+def transform_dim_provider(df, startdate):
+
+    licenses = np.append(df['Attending Provider License Number'].unique(),
+              df['Operating Provider License Number'].unique())
+
+    licenses = np.append(licenses, df['Other Provider License Number'].unique())
+
+    dim = pd.DataFrame(pd.Series(licenses).unique(), columns=['Provider License Number'])
+
+    # add the new SCD tracking columns
+    #dim['Active Flag'] = 1
+    #dim['Effective Start Date'] = startdate
+    #dim['Effective End Date'] = np.nan
+
+    return dim

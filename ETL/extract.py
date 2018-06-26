@@ -51,13 +51,3 @@ def read_source_file():
 
     print('done!')
     return df
-
-def extract_dim_facility(df):
-
-    df = df.groupby(['Facility Id']).agg({
-        'Health Service Area': 'first',
-        'Hospital County': 'first',
-        'Operating Certificate Number': 'first',
-        'Facility Name': 'first'
-    }).reset_index()
-    return df

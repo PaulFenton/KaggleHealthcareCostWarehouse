@@ -1,5 +1,5 @@
 import pandas as pd
 
-def load_dim_facility(df, engine):
-    df.to_sql("dim_Facility", engine)
+def load_dim(dim, table_name, engine):
+    dim.to_sql(table_name, con=engine, if_exists='append', index=False)
     return
