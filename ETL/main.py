@@ -1,9 +1,18 @@
-from extract import read_source_file
-from transform import clean_source, transform_dim_facility, transform_dim_diagnosis, transform_dim_procedure, transform_dim_provider
+from extract import read_source_file, read_dim_date
+from transform import clean_source,\
+    transform_dim_facility,\
+    transform_dim_diagnosis,\
+    transform_dim_procedure,\
+    transform_dim_provider,\
+    transform_dim_patients_refine
 from load import load_dim
 from create_warehouse import create
 from connect import connect_local_sql_server_2016, engine_local_sql_server_2016
 import pandas as pd
+import numpy as np
+
+source_path = "../source_data/Hospital_Inpatient_Discharges__SPARCS_De-Identified___2015.csv"
+date_path = "../source_data/date.csv"
 
 # util functions
 def merge(df, dim, dim_columns, join_label):
@@ -31,19 +40,46 @@ create(connection)
 
 
 # read source data
-df = read_source_file()
+df = read_source_file(source_path)
 
 # perform initial type conversions and codify redacted data
 df = clean_source(df)
 
 # transform and load dim_Facility
 df, dim_Facility = process_dimension(df, 'dim_Facility', transform_dim_facility, load_dim, 'Facility Id', 'Facility Key', engine)
+df = df.drop(['Health Service Area', 'Hospital County', 'Operating Certificate Number', 'Facility Name'], axis=1)
 
 # transform and load dim_Classifications_Diag
 df, dim_Classifcations_Diag = process_dimension(df, 'dim_Classifications_Diag', transform_dim_diagnosis, load_dim, 'CCS Diagnosis Code', 'Classifications_Diag_Key', engine)
+df = df.drop(['CCS Diagnosis Description'], axis=1)
 
 # transform and load dim_Classifications_Proc
 df, dim_Classifications_Proc = process_dimension(df, 'dim_Classifications_Proc', transform_dim_procedure, load_dim, 'CCS Procedure Code', 'Classifications_Proc_Key', engine)
+df = df.drop(['CCS Procedure Description'], axis=1)
+
+# transform and load the patients refine table
+df, dim_Patients_Refine = process_dimension(df, 'dim_Patients_Refine', transform_dim_patients_refine, load_dim, 'APR DRG Code', 'Patients_Refine_Key', engine)
+df = df.drop(['APR Risk of Mortality'], axis=1)
 
 # transform and load dim_Provider
 #df, dim_Provider = process_dimension(df, 'dim_Provider', transform_dim_provider, load_dim, 'Provider License Number', 'Provider_Key', engine)
+dim_Provider = transform_dim_provider(df, 0)
+load_dim(dim_Provider, 'dim_Provider', engine)
+dim_Provider['Provider_Key'] = dim_Provider.index + 1
+dim_Provider['Provider License Number'] = dim_Provider['Provider License Number'].astype(str) #change type to object to allow joining with nullable column
+count = df.count()[0]
+df = pd.merge(df, dim_Provider[['Provider_Key', 'Provider License Number']], left_on='Attending Provider License Number', right_on='Provider License Number', how='left').drop(['Provider License Number'], axis=1)
+df = df.rename(columns={'Provider_Key': 'Attending_Provider_Key'})
+df = pd.merge(df, dim_Provider[['Provider_Key', 'Provider License Number']], left_on='Operating Provider License Number', right_on='Provider License Number', how='left').drop(['Provider License Number'], axis=1)
+df = df.rename(columns={'Provider_Key': 'Operating_Provider_Key'})
+df = pd.merge(df, dim_Provider[['Provider_Key', 'Provider License Number']], left_on='Other Provider License Number', right_on='Provider License Number', how='left').drop(['Provider License Number'], axis=1)
+df = df.rename(columns={'Provider_Key': 'Other_Provider_Key'})
+print("Merged with " + str(count- df.count()[0]) + " records dropped.")
+
+# extract from file and load the constructed dim_Date table
+dim_Date = read_dim_date(date_path)
+load_dim(dim_Date, 'dim_Date', engine)
+dim_Date['Date_Key'] = dim_Date.index + 1
+# put a random date column on the fact table to simulate usage of the date dimension
+df['Date_Key'] = np.random.randint(dim_Date['Date_Key'].min(), dim_Date['Date_Key'].max(), df.shape[0])
+

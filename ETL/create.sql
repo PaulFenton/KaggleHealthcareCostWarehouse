@@ -1,5 +1,51 @@
 IF OBJECT_ID('dbo.fact_Procedure_Cost', 'U') IS NOT NULL
-  DROP TABLE dbo.Fact;
+    IF OBJECT_ID('FK_Date', 'U') IS NOT NULL
+        ALTER TABLE fact_Procedure_Cost
+        DROP CONSTRAINT FK_Date;
+
+IF OBJECT_ID('dbo.fact_Procedure_Cost', 'U') IS NOT NULL
+    IF OBJECT_ID('FK_Facility', 'U') IS NOT NULL
+        ALTER TABLE fact_Procedure_Cost
+        DROP CONSTRAINT FK_Facility;
+
+IF OBJECT_ID('dbo.fact_Procedure_Cost', 'U') IS NOT NULL
+    IF OBJECT_ID('FK_Classifications_Diag', 'U') IS NOT NULL
+        ALTER TABLE fact_Procedure_Cost
+        DROP CONSTRAINT FK_Classifications_Diag;
+
+IF OBJECT_ID('dbo.fact_Procedure_Cost', 'U') IS NOT NULL
+    IF OBJECT_ID('FK_Classifications_Proc', 'U') IS NOT NULL
+        ALTER TABLE fact_Procedure_Cost
+        DROP CONSTRAINT FK_Classifications_Proc;
+
+IF OBJECT_ID('dbo.fact_Procedure_Cost', 'U') IS NOT NULL
+    IF OBJECT_ID('FK_Patients_Refine', 'U') IS NOT NULL
+        ALTER TABLE fact_Procedure_Cost
+        DROP CONSTRAINT FK_Patients_Refine;
+
+IF OBJECT_ID('dbo.fact_Procedure_Cost', 'U') IS NOT NULL
+    IF OBJECT_ID('FK_Patient', 'U') IS NOT NULL
+        ALTER TABLE fact_Procedure_Cost
+        DROP CONSTRAINT FK_Patient;
+
+IF OBJECT_ID('dbo.fact_Procedure_Cost', 'U') IS NOT NULL
+    IF OBJECT_ID('FK_Attending_Provider', 'U') IS NOT NULL
+        ALTER TABLE fact_Procedure_Cost
+        DROP CONSTRAINT FK_Attending_Provider;
+
+IF OBJECT_ID('dbo.fact_Procedure_Cost', 'U') IS NOT NULL
+    IF OBJECT_ID('FK_Operating_Provider', 'U') IS NOT NULL
+        ALTER TABLE fact_Procedure_Cost
+        DROP CONSTRAINT FK_Operating_Provider;
+
+IF OBJECT_ID('dbo.fact_Procedure_Cost', 'U') IS NOT NULL
+    IF OBJECT_ID('FK_Other_Provider', 'U') IS NOT NULL
+        ALTER TABLE fact_Procedure_Cost
+        DROP CONSTRAINT FK_Other_Provider;
+
+
+IF OBJECT_ID('dbo.fact_Procedure_Cost', 'U') IS NOT NULL
+  DROP TABLE dbo.fact_Procedure_Cost;
 IF OBJECT_ID('dbo.dim_Date', 'U') IS NOT NULL
   DROP TABLE dbo.dim_Date;
 IF OBJECT_ID('dbo.dim_Facility', 'U') IS NOT NULL
@@ -39,29 +85,25 @@ CREATE TABLE dim_Patient(
 
 CREATE TABLE dim_Date(
 	Date_Key int NOT NULL IDENTITY(1,1),
-	[date] datetime,
-	yearmonthnum integer,
-	calendar_quarter varchar(50),
-	monthnum integer,
-	monthname varchar(50),
-	monthshortname varchar(50),
-	weeknum integer,
-	daynumofyear integer,
-	daynumofmonth integer,
-	daynumofweek integer,
-	dayname varchar(50),
-	dayshortname varchar(50),
-	quarter integer,
-	yearquarternum integer,
-	daynumofquarter integer
+	[Date] datetime,
+	[YearMonthNum] integer,
+	[Calendar_Quarter] varchar(50),
+	[MonthNum] integer,
+	[MonthName] varchar(50),
+	[MonthShortName] varchar(50),
+	[WeekNum] integer,
+	[DayNumOfYear] integer,
+	[DayNumOfMonth] integer,
+	[DayNumOfWeek] integer,
+	[DayName] varchar(50),
+	[DayShortName] varchar(50),
+	[Quarter] integer,
+	[YearQuarterNum] integer,
+	[DayNumOfQuarter] integer
 )
 
 CREATE TABLE dim_Classifications_Diag(
-<<<<<<< HEAD
 	Classifications_Diag_Key int NOT NULL IDENTITY(1,1),
-=======
-	Classifications_Diag_key int NOT NULL IDENTITY(1,1),
->>>>>>> 45f99165646d088d94ab682062aa075c78ce3f3a
 	[CCS Diagnosis Code] int,
 	[CCS Diagnosis Description] varchar(255),
 	[Active Flag] smallint NOT NULL DEFAULT 1,
@@ -85,14 +127,10 @@ CREATE TABLE dim_Patients_Refine(
 
 CREATE TABLE dim_Provider(
 	Provider_Key int NOT NULL IDENTITY(1,1),
-<<<<<<< HEAD
 	[Provider License Number] int,
-=======
-	[Provider License Number] varchar(50),
 	[Active Flag] smallint NOT NULL DEFAULT 1,
 	[Effective Start Date] datetime,
 	[Effective End Date] datetime
->>>>>>> 45f99165646d088d94ab682062aa075c78ce3f3a
 )
 
 alter table dim_Facility add primary key (Facility_Key);

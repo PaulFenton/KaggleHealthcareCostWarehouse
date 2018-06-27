@@ -3,7 +3,10 @@ import numpy as np
 
 def clean_source(df):
 
-    # deal with nulls in Operating Certificate Number
+    # drop unneeded colums
+    drop = ['']
+
+
     #df['Facility Id'] = df['Facility Id'].fillna(0).astype('int64')
     df['Operating Certificate Number'] = df['Operating Certificate Number'].fillna(4000).astype('int64') # use certificate # 4000 to indicate identifying information was redacted for abortion procedure
 
@@ -41,29 +44,29 @@ def transform_dim_facility(df, startdate):
 
 def transform_dim_diagnosis(df, startdate):
 
-    # extract the facility dimension from the main DF
+    # extract the diagnosis dimension from the main DF
     dim = df.groupby(['CCS Diagnosis Code']).agg({
         'CCS Diagnosis Description': 'first'
     }).reset_index()
 
     # add the new SCD tracking columns
-    #dim['Active Flag'] = 1
-    #dim['Effective Start Date'] = startdate
-    #dim['Effective End Date'] = np.nan
+    dim['Active Flag'] = 1
+    dim['Effective Start Date'] = startdate
+    dim['Effective End Date'] = np.nan
 
     return dim
 
 def transform_dim_procedure(df, startdate):
 
-    # extract the facility dimension from the main DF
+    # extract the procedure dimension from the main DF
     dim = df.groupby(['CCS Procedure Code']).agg({
         'CCS Procedure Description': 'first'
     }).reset_index()
 
     # add the new SCD tracking columns
-    #dim['Active Flag'] = 1
-    #dim['Effective Start Date'] = startdate
-    #dim['Effective End Date'] = np.nan
+    dim['Active Flag'] = 1
+    dim['Effective Start Date'] = startdate
+    dim['Effective End Date'] = np.nan
 
     return dim
 
@@ -74,11 +77,22 @@ def transform_dim_provider(df, startdate):
 
     licenses = np.append(licenses, df['Other Provider License Number'].unique())
 
-    dim = pd.DataFrame(pd.Series(licenses).unique(), columns=['Provider License Number'])
+    dim = pd.DataFrame(pd.Series(licenses).unique(), columns=['Provider License Number']).dropna()
+
+    # now what we have got rid of the nulls, convert to int
+    dim['Provider License Number'] = dim['Provider License Number'].astype(str).astype(np.int64)
 
     # add the new SCD tracking columns
-    #dim['Active Flag'] = 1
-    #dim['Effective Start Date'] = startdate
-    #dim['Effective End Date'] = np.nan
+    dim['Active Flag'] = 1
+    dim['Effective Start Date'] = startdate
+    dim['Effective End Date'] = np.nan
+    print(dim.head(5))
+    return dim
+
+def transform_dim_patients_refine(df, startdate):
+    # extract the petients refine dimension from the main DF
+    dim = df.groupby(['APR DRG Code']).agg({
+        'APR Risk of Mortality': 'first'
+    }).reset_index()
 
     return dim
