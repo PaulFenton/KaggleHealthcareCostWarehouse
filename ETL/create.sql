@@ -76,7 +76,7 @@ CREATE TABLE dim_Facility(
 CREATE TABLE dim_Patient(
 	Patient_Key int NOT NULL IDENTITY(1,1),
 	[Age Group] nvarchar(50),
-	[ip Code - 3 digits] int,
+	[Zip Code - 3 digits] int,
 	Gender varchar(5),
 	Race varchar(50),
 	Ethnicity varchar(50),

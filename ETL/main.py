@@ -4,7 +4,8 @@ from transform import clean_source,\
     transform_dim_diagnosis,\
     transform_dim_procedure,\
     transform_dim_provider,\
-    transform_dim_patients_refine
+    transform_dim_patients_refine,\
+    transform_dim_patients
 from load import load_dim
 from create_warehouse import create
 from connect import connect_local_sql_server_2016, engine_local_sql_server_2016
@@ -30,7 +31,12 @@ def process_dimension(df, table_name, transformer, loader, join_label, index_lab
     dim[index_label] = dim.index + 1  # database will assign this key scheme automatically, recreate it to help pandas map the fact table keys
 
     print('Encoding fact table keys for ' + table_name + '..')
-    df = merge(df, dim, [index_label, join_label], join_label)
+    if(isinstance(join_label, list)):
+        join_label.append(index_label)
+        columns = join_label
+    else:
+        columns = [index_label, join_label]
+    df = merge(df, dim, columns, join_label)
     return df, dim
 
 # connect to the target database and run startup DDL script
@@ -60,6 +66,9 @@ df = df.drop(['CCS Procedure Description'], axis=1)
 # transform and load the patients refine table
 df, dim_Patients_Refine = process_dimension(df, 'dim_Patients_Refine', transform_dim_patients_refine, load_dim, 'APR DRG Code', 'Patients_Refine_Key', engine)
 df = df.drop(['APR Risk of Mortality'], axis=1)
+
+# transform and load the patients junk table
+df, dim_Patients = process_dimension(df, 'dim_Patient', transform_dim_patients, load_dim, ['Age Group', 'Zip Code - 3 digits', 'Gender', 'Race', 'Ethnicity', 'Patient Disposition'], 'Patient_Key', engine)
 
 # transform and load dim_Provider
 #df, dim_Provider = process_dimension(df, 'dim_Provider', transform_dim_provider, load_dim, 'Provider License Number', 'Provider_Key', engine)

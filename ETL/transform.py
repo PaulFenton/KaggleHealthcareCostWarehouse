@@ -96,3 +96,7 @@ def transform_dim_patients_refine(df, startdate):
     }).reset_index()
 
     return dim
+
+def transform_dim_patients(df, startdate):
+    dim = df[['Age Group', 'Zip Code - 3 digits', 'Gender', 'Race', 'Ethnicity', 'Patient Disposition']].drop_duplicates()
+    return dim
