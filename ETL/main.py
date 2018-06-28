@@ -52,7 +52,7 @@ df = read_source_file(source_path)
 df = clean_source(df)
 
 # transform and load dim_Facility
-df, dim_Facility = process_dimension(df, 'dim_Facility', transform_dim_facility, load_dim, 'Facility Id', 'Facility Key', engine)
+df, dim_Facility = process_dimension(df, 'dim_Facility', transform_dim_facility, load_dim, 'Facility Id', 'Facility_Key', engine)
 df = df.drop(['Health Service Area', 'Hospital County', 'Operating Certificate Number', 'Facility Name'], axis=1)
 
 # transform and load dim_Classifications_Diag
@@ -68,7 +68,7 @@ df, dim_Patients_Refine = process_dimension(df, 'dim_Patients_Refine', transform
 df = df.drop(['APR Risk of Mortality'], axis=1)
 
 # transform and load the patients junk table
-df, dim_Patients = process_dimension(df, 'dim_Patient', transform_dim_patients, load_dim, ['Age Group', 'Zip Code - 3 digits', 'Gender', 'Race', 'Ethnicity', 'Patient Disposition'], 'Patient_Key', engine)
+#df, dim_Patients = process_dimension(df, 'dim_Patient', transform_dim_patients, load_dim, ['Age Group', 'Zip Code - 3 digits', 'Gender', 'Race', 'Ethnicity', 'Patient Disposition'], 'Patient_Key', engine)
 
 # transform and load dim_Provider
 #df, dim_Provider = process_dimension(df, 'dim_Provider', transform_dim_provider, load_dim, 'Provider License Number', 'Provider_Key', engine)
@@ -83,6 +83,7 @@ df = pd.merge(df, dim_Provider[['Provider_Key', 'Provider License Number']], lef
 df = df.rename(columns={'Provider_Key': 'Operating_Provider_Key'})
 df = pd.merge(df, dim_Provider[['Provider_Key', 'Provider License Number']], left_on='Other Provider License Number', right_on='Provider License Number', how='left').drop(['Provider License Number'], axis=1)
 df = df.rename(columns={'Provider_Key': 'Other_Provider_Key'})
+df = df.drop(['Attending Provider License Number', 'Operating Provider License Number', 'Other Provider License Number'], axis=1)
 print("Merged with " + str(count- df.count()[0]) + " records dropped.")
 
 # extract from file and load the constructed dim_Date table
@@ -91,4 +92,19 @@ load_dim(dim_Date, 'dim_Date', engine)
 dim_Date['Date_Key'] = dim_Date.index + 1
 # put a random date column on the fact table to simulate usage of the date dimension
 df['Date_Key'] = np.random.randint(dim_Date['Date_Key'].min(), dim_Date['Date_Key'].max(), df.shape[0])
+
+
+count = df.count()[0]
+df = df.groupby(['Date_Key', 'Facility_Key', 'Classifications_Diag_Key', 'Classifications_Proc_Key', 'Patients_Refine_Key']).agg({
+    'Attending_Provider_Key': 'first',
+    'Operating_Provider_Key': 'first',
+    'Other_Provider_Key': 'first',
+    'Length of Stay': 'mean',
+    'Birth Weight': 'mean',
+    'Total Costs': sum,
+    'Total Charges': sum,
+    'Total Profit': sum
+}).reset_index()
+
+load_dim(df, 'fact_Procedure_Cost', engine)
 

@@ -11,6 +11,7 @@ def create(connection):
     # execute each statement in the DDL script
     for statement in sqlScript.split(";"):
         with connection.cursor() as cur:
+            print(statement)
             cur.execute(statement)
 
     # close the connection

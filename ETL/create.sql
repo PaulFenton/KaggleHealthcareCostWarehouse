@@ -142,25 +142,24 @@ alter table dim_Patients_Refine add primary key (Patients_Refine_Key);
 alter table dim_Provider add primary key (Provider_Key);
 
 CREATE TABLE fact_Procedure_Cost(
-
 	Date_Key int NOT NULL,
 	Facility_Key int NOT NULL,
 	Classifications_Diag_Key int NOT NULL,
 	Classifications_Proc_Key int NOT NULL,
 	Patients_Refine_Key int NOT NULL,
-	Patient_Key int NOT NULL,
-	Attending_Provider_Key int NOT NULL,
-	Operating_Provider_Key int NOT NULL,
-	Other_Provider_Key int NOT NULL,
+	Attending_Provider_Key int NULL,
+	Operating_Provider_Key int NULL,
+	Other_Provider_Key int NULL,
+	[Length of Stay] numeric(10, 2) NULL,
+	[Birth Weight] numeric(10, 2) NULL,
 	[Total Costs] numeric(10, 2) NULL,
 	[Total Charges] numeric(10, 2) NULL,
 	[Total Profit] numeric(10, 2) NULL
-
 );
 
 alter table fact_Procedure_Cost add primary key 
 (Date_Key, Facility_Key,Classifications_Diag_Key,Classifications_Proc_Key,
-Patients_Refine_Key,Patient_Key,Attending_Provider_Key,Operating_Provider_Key,Other_Provider_Key);
+Patients_Refine_Key);
 
 alter table fact_Procedure_Cost add constraint FK_Date
 foreign key (Date_Key) references dim_Date (Date_Key);
@@ -175,16 +174,4 @@ alter table fact_Procedure_Cost add constraint FK_Classifications_Proc
 foreign key (Classifications_Proc_Key) references dim_Classifications_Proc (Classifications_Proc_Key);
 
 alter table fact_Procedure_Cost add constraint FK_Patients_Refine
-foreign key (Patients_Refine_Key) references dim_Patients_Refine (Patients_Refine_Key);
-
-alter table fact_Procedure_Cost add constraint FK_Patient
-foreign key (Patient_Key) references dim_Patient (Patient_Key);
-
-alter table fact_Procedure_Cost add constraint FK_Attending_Provider
-foreign key (Attending_Provider_Key) references dim_Provider (Provider_Key);
-
-alter table fact_Procedure_Cost add constraint FK_Operating_Provider
-foreign key (Operating_Provider_Key) references dim_Provider (Provider_Key);
-
-alter table fact_Procedure_Cost add constraint FK_Other_Provider
-foreign key (Other_Provider_Key) references dim_Provider (Provider_Key)
+foreign key (Patients_Refine_Key) references dim_Patients_Refine (Patients_Refine_Key)

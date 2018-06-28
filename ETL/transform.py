@@ -4,8 +4,10 @@ import numpy as np
 def clean_source(df):
 
     # drop unneeded colums
-    drop = ['']
-
+    drop = ['Age Group', 'Zip Code - 3 digits', 'Gender', 'Race', 'Ethnicity', 'Patient Disposition',\
+            'Type of Admission', 'Discharge Year', 'APR MDC Code', 'APR MDC Description', 'APR Severity of Illness Code', 'APR DRG Description', \
+            'APR Severity of Illness Description', 'APR Medical Surgical Description', 'Payment Typology 1', 'Payment Typology 2', 'Payment Typology 3', 'Abortion Edit Indicator', 'Emergency Department Indicator']
+    df = df.drop(drop, axis=1)
 
     #df['Facility Id'] = df['Facility Id'].fillna(0).astype('int64')
     df['Operating Certificate Number'] = df['Operating Certificate Number'].fillna(4000).astype('int64') # use certificate # 4000 to indicate identifying information was redacted for abortion procedure
