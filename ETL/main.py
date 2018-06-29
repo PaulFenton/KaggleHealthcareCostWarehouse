@@ -91,7 +91,7 @@ dim_Date = read_dim_date(date_path)
 load_dim(dim_Date, 'dim_Date', engine)
 dim_Date['Date_Key'] = dim_Date.index + 1
 # put a random date column on the fact table to simulate usage of the date dimension
-df['Date_Key'] = np.random.randint(dim_Date['Date_Key'].min(), dim_Date['Date_Key'].max(), df.shape[0])
+df['Date_Key'] = np.random.randint(dim_Date['Date_Key'].min(), dim_Date['Date_Key'].max()-100, df.shape[0])
 
 
 count = df.count()[0]
