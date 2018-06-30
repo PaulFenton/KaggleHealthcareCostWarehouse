@@ -105,6 +105,6 @@ df = df.groupby(['Date_Key', 'Facility_Key', 'Classifications_Diag_Key', 'Classi
     'Total Charges': sum,
     'Total Profit': sum
 }).reset_index()
-
+print("Merged with " + str(count- df.count()[0]) + " records dropped.")
 load_dim(df, 'fact_Procedure_Cost', engine)
 

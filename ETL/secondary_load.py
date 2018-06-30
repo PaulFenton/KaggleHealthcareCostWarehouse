@@ -8,6 +8,7 @@ second_load_fact_path = "../source_data/update_procedure_cost.csv"
 second_load_dim_diagnosis_path = "../source_data/update_dim_diagnosis.csv"
 second_load_dim_procedure_path = "../source_data/update_dim_procedure.csv"
 second_load_dim_facility_path = "../source_data/update_dim_facility.csv"
+sql_update_path = "./sql/update_dimensions.sql"
 
 
 # get connection and engine
@@ -19,7 +20,7 @@ engine = engine_local_sql_server_2016()
 
 
 # mark obsolete dimensions as no longer active and set the end date
-sqlScript = open('./update_dimensions.sql', 'r').read()
+sqlScript = open(sql_update_path, 'r').read()
 
 # execute each statement in the DDL script
 for statement in sqlScript.split(";"):
