@@ -1,4 +1,4 @@
-# Repo for the healthcare cost Data Warehouse codebase
+# Repo for Kaggle SPARCS Healthcare database ETL & Data Warehouse Creation
 
 ## Overview
 
